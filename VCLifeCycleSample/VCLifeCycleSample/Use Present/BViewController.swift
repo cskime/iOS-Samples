@@ -16,6 +16,8 @@ class BViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    self.presentationController?.delegate = self
+//    self.isModalInPresentation = true
     print("[B]", #function)
   }
 
@@ -42,5 +44,24 @@ class BViewController: UIViewController {
   @IBAction func dismissTouched(_ sender: Any) {
     print("========== Dismiss ==========")
     self.dismiss(animated: true)
+  }
+}
+
+extension BViewController: UIAdaptivePresentationControllerDelegate {
+  func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+    print(#function)
+  }
+  
+  func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+    print(#function)
+    return true
+  }
+  
+  func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
+    print(#function)
+  }
+  
+  func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+    print(#function)
   }
 }

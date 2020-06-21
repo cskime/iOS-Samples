@@ -42,8 +42,7 @@ class AViewController: UIViewController {
   @IBAction func presentTouched(_ sender: Any) {
     print("========== Present ==========")
     guard let vc = storyboard?.instantiateViewController(withIdentifier: "BViewController") else { return }
-    vc.modalPresentationStyle = .fullScreen
+//    vc.modalPresentationStyle = .fullScreen
     self.present(vc, animated: true)
   }
 }
-

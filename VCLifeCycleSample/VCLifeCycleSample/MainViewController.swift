@@ -39,7 +39,14 @@ class MainViewController: UITableViewController {
     ]
     let storyboard = self.storyboards[indexPath.row]
     let vc = storyboard.instantiateViewController(withIdentifier: initial[indexPath.row])
-    vc.modalPresentationStyle = .fullScreen
-    self.present(vc, animated: true)
+    (
+      UIApplication
+        .shared
+        .connectedScenes
+        .first?
+        .delegate as? SceneDelegate
+    )?
+      .window?
+      .rootViewController = vc
   }
 }
