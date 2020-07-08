@@ -16,7 +16,10 @@ class ViewController: UIViewController {
   }
 
   @IBAction func switchToAddress(_ sender: UIButton) {
-    UIApplication.shared.openURL(URL(string: "sms:000-0000-0000")!)
+    guard let url = URL(string: "sms:000-0000-0000") else { return }
+    if UIApplication.shared.canOpenURL(url) {
+      UIApplication.shared.open(url)
+    }
   }
 
 }
