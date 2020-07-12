@@ -13,11 +13,9 @@ class PhotosViewController: UIViewController {
   
   @IBOutlet weak var collectionView: UICollectionView!
   
-  private let manager = PHImageManager()
+  private let imageManager = PHImageManager()
   var assets = PHFetchResult<PHAsset>()
-  private var requestIDs = [PHImageRequestID]()
   
-  private let scale: CGFloat = UIScreen.main.scale
   private let spacing: CGFloat = 4
   private let itemsInRow: CGFloat = 3
   private var imageWidth: CGFloat {
@@ -39,10 +37,6 @@ class PhotosViewController: UIViewController {
     layout?.itemSize = CGSize(width: self.imageWidth, height: self.imageWidth)
   }
   
-  override func viewDidDisappear(_ animated: Bool) {
-    super.viewDidDisappear(animated)
-    self.requestIDs.forEach { self.manager.cancelImageRequest($0) }
-  }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -56,17 +50,13 @@ extension PhotosViewController: UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let item = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as? PhotoCell
     
+    let scale: CGFloat = UIScreen.main.scale
     let asset = self.assets.object(at: indexPath.item)
-    let size = CGSize(width: self.imageWidth * self.scale, height: self.imageWidth * self.scale)
+    let size = CGSize(width: self.imageWidth * scale, height: self.imageWidth * scale)
 
-    let requestID = manager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: nil) { [weak self] (image, _) in
+    imageManager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: nil) { (image, _) in
       item?.imageView.image = image
-      
-      if let index = self?.requestIDs.firstIndex(of: Int32(indexPath.item)) {
-        self?.requestIDs.remove(at: index)
-      }
     }
-    self.requestIDs.append(requestID)
     
     return item ?? UICollectionViewCell()
   }

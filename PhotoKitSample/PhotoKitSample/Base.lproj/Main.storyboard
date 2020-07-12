@@ -92,6 +92,12 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="k5R-Eu-BS0"/>
                                 </connections>
                             </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tpw-FX-rgn">
+                                <rect key="frame" x="321.66666666666669" y="109.66666666666667" width="37.333333333333314" height="20.333333333333329"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -100,7 +106,9 @@
                             <constraint firstItem="Qod-fh-OMc" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="8" id="KOR-I2-z2q"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="FmX-sL-XxI" secondAttribute="bottom" id="LEf-7O-d0V"/>
                             <constraint firstItem="FmX-sL-XxI" firstAttribute="top" secondItem="Qod-fh-OMc" secondAttribute="bottom" constant="8" id="NYq-34-e5b"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="tpw-FX-rgn" secondAttribute="trailing" constant="16" id="kJ7-XI-8EP"/>
                             <constraint firstItem="FmX-sL-XxI" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="lZV-Ck-gd6"/>
+                            <constraint firstItem="tpw-FX-rgn" firstAttribute="centerY" secondItem="Qod-fh-OMc" secondAttribute="centerY" id="xcp-y1-PxP"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -119,6 +127,7 @@
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="albumCount" destination="tpw-FX-rgn" id="KbE-0e-3ue"/>
                         <outlet property="subtypeLabel" destination="fbA-OR-Om1" id="48e-yk-Knc"/>
                         <outlet property="tableView" destination="FmX-sL-XxI" id="qUp-2B-fGe"/>
                         <outlet property="typeLabel" destination="jIu-L3-XOl" id="byX-Us-oKK"/>
@@ -153,7 +162,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OCC-6m-V9k">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OCC-6m-V9k">
                                                     <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="OCC-6m-V9k" secondAttribute="height" multiplier="1:1" id="WHa-DK-mhB"/>

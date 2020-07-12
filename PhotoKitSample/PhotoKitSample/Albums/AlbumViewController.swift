@@ -14,6 +14,7 @@ class AlbumViewController: UIViewController {
   @IBOutlet weak var tableView: UITableView!
   @IBOutlet weak var typeLabel: UILabel!
   @IBOutlet weak var subtypeLabel: UILabel!
+  @IBOutlet weak var albumCount: UILabel!
   
   private var albums = PHFetchResult<PHAssetCollection>() {
     didSet {
@@ -33,7 +34,7 @@ class AlbumViewController: UIViewController {
       let newType = currentTypes.type
       let newSubtype = oldValue.type == newType ? currentTypes.subtype : .any
       
-      self.loadAlbums(type: newType, subtype: newSubtype)
+      self.albums = self.fetchAlbums(with: newType, subtype: newSubtype)
     }
   }
   
@@ -43,11 +44,22 @@ class AlbumViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
     self.checkAuthorization { isAuthorized in
       if isAuthorized {
-        self.loadAlbums(type: .smartAlbum, subtype: .smartAlbumUserLibrary)
+        DispatchQueue.main.async { [weak self] in
+          guard let self = self else { return }
+          self.albums = self.fetchAlbums(with: .smartAlbum, subtype: .smartAlbumUserLibrary)
+        }
       }
     }
+  }
+  
+  // MARK: Setup UI
+  
+  private func displayCurrentTypes(type: PHAssetCollectionType, subtype: PHAssetCollectionSubtype) {
+    self.typeLabel.text = type.description
+    self.subtypeLabel.text = subtype.description
   }
   
   // MARK: Segue
@@ -103,34 +115,32 @@ extension AlbumViewController {
       handler(true)
     case .denied:
       print("Access to photo library is denied. Please ")
+      handler(false)
     case .notDetermined:
       print("Need to permission")
       PHPhotoLibrary.requestAuthorization { (status) in
         switch status {
         case .authorized:   handler(true)
-        default:            break
+        default:            handler(false)
         }
       }
     case .restricted:
       print("Restricted")
+      handler(false)
     default:
       break
     }
   }
   
-  private func loadAlbums(type: PHAssetCollectionType, subtype: PHAssetCollectionSubtype) {
-    self.albums = self.fetchAlbums(with: type, subtype: subtype)
-    
-    self.typeLabel.text = type.description
-    self.subtypeLabel.text = subtype.description
-  }
-  
   private func fetchAlbums(with type: PHAssetCollectionType, subtype: PHAssetCollectionSubtype, options: PHFetchOptions? = nil) -> PHFetchResult<PHAssetCollection> {
+    self.displayCurrentTypes(type: type, subtype: subtype)
     return PHAssetCollection.fetchAssetCollections(with: type, subtype: subtype, options: options)
   }
   
   private func fetchAssets(in collection: PHAssetCollection) -> PHFetchResult<PHAsset> {
-    return PHAsset.fetchAssets(in: collection, options: nil)
+    let options = PHFetchOptions()
+    options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+    return PHAsset.fetchAssets(in: collection, options: options)
   }
   
 }
@@ -146,7 +156,6 @@ extension AlbumViewController: UITableViewDataSource {
     let cell = tableView.dequeueReusableCell(withIdentifier: "AlbumCell", for: indexPath)
     
     let collection = self.albums.object(at: indexPath.row)
-    let assets = self.fetchAssets(in: collection)
     
     // Title 설정
     cell.textLabel?.text = collection.localizedTitle ?? "Unknown"
