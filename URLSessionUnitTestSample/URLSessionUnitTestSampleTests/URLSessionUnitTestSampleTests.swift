@@ -8,29 +8,57 @@
 import XCTest
 @testable import URLSessionUnitTestSample
 
-final class URLSessionUnitTestSampleTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+final class URLSessionTestSampleTests: XCTestCase {
+    
+    var session: URLSession!
+    
+    override func setUp() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [URLProtocolMock.self]
+        session = URLSession(configuration: configuration)
+        URLProtocolMock.requestHandler = nil
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testSuccess() {
+        let dummyData = "data".data(using: .utf8)!
+        URLProtocolMock.requestHandler = { request in
+            return (HTTPURLResponse(), dummyData)
         }
+        
+        let expectation = XCTestExpectation(description: "Response")
+        let service = SampleService(session: session)
+        service.request { isSucceed in
+            XCTAssertTrue(isSucceed)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1)
     }
-
+    
+    func testFailureWhenDataIsNil() {
+        URLProtocolMock.requestHandler = { request in
+            return (HTTPURLResponse(), nil)
+        }
+        
+        let expectation = XCTestExpectation(description: "Response")
+        let service = SampleService(session: session)
+        service.request { isSucceed in
+            XCTAssertFalse(isSucceed)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1)
+    }
+    
+    func testFailureWhenThrowError() {
+        URLProtocolMock.requestHandler = { request in
+            throw NSError(domain: "error", code: 0)
+        }
+        
+        let expectation = XCTestExpectation(description: "Response")
+        let service = SampleService(session: session)
+        service.request { isSucceed in
+            XCTAssertFalse(isSucceed)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1)
+    }
 }
